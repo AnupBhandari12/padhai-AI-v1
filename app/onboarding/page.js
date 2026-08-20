@@ -1,0 +1,16 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { ArrowRight, Check, GraduationCap } from 'lucide-react';
+
+const exams = ['CEE','IOE','Loksewa','SEE','+2','Bachelor','Other'];
+const subjects = ['Physics','Chemistry','Mathematics','Biology','English','Nepali','Computer','Reasoning','General Knowledge'];
+const goals = ['Crack the exam','Improve rank','Learn concepts','Just exploring'];
+
+export default function Onboarding() {
+  const [step,setStep]=useState(1); const [exam,setExam]=useState('CEE'); const [selected,setSelected]=useState(['Physics','Chemistry']); const [goal,setGoal]=useState(goals[0]); const [minutes,setMinutes]=useState(60); const router=useRouter();
+  function toggleSubject(s){setSelected(v=>v.includes(s)?v.filter(x=>x!==s):[...v,s]);}
+  async function finish(){const res=await fetch('/api/auth/onboarding',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exam,subjects:selected,goal,dailyMinutes:minutes})}); if(res.ok) router.push('/dashboard'); else router.push('/dashboard');}
+  return <main className="onboarding"><div className="onboarding-top"><div className="logo"><GraduationCap size={24}/>Padh<span>AI</span></div><div className="steps"><span className={step>=1?'active':''}>1</span><i/><span className={step>=2?'active':''}>2</span><i/><span className={step>=3?'active':''}>3</span></div></div><section className="onboarding-card">{step===1&&<><div className="eyebrow">Step 1 of 3</div><h1>What are you preparing for?</h1><p className="muted">This helps us personalize your experience.</p><div className="choice-grid">{exams.map(x=><button key={x} className={`choice ${exam===x?'selected':''}`} onClick={()=>setExam(x)}>{x===exam&&<span className="choice-check"><Check size={13}/></span>}<GraduationCap size={20}/><strong>{x}</strong></button>)}</div><button className="btn btn-primary btn-full" onClick={()=>setStep(2)}>Continue <ArrowRight size={17}/></button></>}{step===2&&<><div className="eyebrow">Step 2 of 3</div><h1>Select your subjects</h1><p className="muted">You can always change them later.</p><div className="subject-grid">{subjects.map(s=><button key={s} className={`subject ${selected.includes(s)?'selected':''}`} onClick={()=>toggleSubject(s)}>{s}{selected.includes(s)&&<Check size={16}/>}</button>)}</div><button className="btn btn-primary btn-full" onClick={()=>setStep(3)}>Continue <ArrowRight size={17}/></button></>}{step===3&&<><div className="eyebrow">Step 3 of 3</div><h1>What&apos;s your study goal?</h1><p className="muted">We&apos;ll build your starting plan around this.</p><div className="goal-list">{goals.map(g=><button key={g} className={`goal ${goal===g?'selected':''}`} onClick={()=>setGoal(g)}><span><strong>{g}</strong><small>{g==='Crack the exam'?'I want to score the highest':g==='Improve rank'?'I want to improve my rank':g==='Learn concepts'?'I want to understand deeply':'I’m just checking things out'}</small></span>{goal===g&&<Check size={18}/>}</button>)}</div><label className="minutes-label">Daily study time <strong>{minutes} min</strong><input type="range" min="30" max="240" step="15" value={minutes} onChange={e=>setMinutes(Number(e.target.value))}/></label><button className="btn btn-primary btn-full" onClick={finish}>Get Started <ArrowRight size={17}/></button></>}</section></main>;
+}
