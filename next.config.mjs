@@ -5,7 +5,7 @@ const nextConfig = {
   },
   serverExternalPackages: [
     'pdf-parse',
-    '@napi-rs/canva'
+    '@napi-rs/canvas',
   ],
 };
 

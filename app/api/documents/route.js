@@ -5,8 +5,8 @@ import { chunkText } from '@/lib/chunk';
 
 // IMPORTANT:
 // pdf-parse worker must be imported before pdf-parse itself.
-// import { CanvasFactory } from 'pdf-parse/worker';
-// import { PDFParse } from 'pdf-parse';
+import { CanvasFactory } from 'pdf-parse/worker';
+import { PDFParse } from 'pdf-parse';
 
 
 
@@ -155,24 +155,23 @@ export async function POST(request) {
     }
 
     // Read uploaded PDF
-    const buffer = Buffer.from(
-      await file.arrayBuffer()
-    );
+   const buffer = Buffer.from(
+  await file.arrayBuffer()
+);
 
-    if (!buffer.length) {
-      return NextResponse.json(
-        { error: 'The uploaded PDF is empty.' },
-        { status: 400 }
-      );
-    }
+if (!buffer.length) {
+  return NextResponse.json(
+    { error: 'The uploaded PDF is empty.' },
+    { status: 400 }
+  );
+}
 
     // IMPORTANT:
     // Convert Buffer into Uint8Array for pdf-parse v2.
-    const { PDFParse } = await import('pdf-parse');
-
     parser = new PDFParse({
-      data: new Uint8Array(buffer),
-    });
+  data: new Uint8Array(buffer),
+  CanvasFactory,
+});
 
     const parsed = await parser.getText();
 
