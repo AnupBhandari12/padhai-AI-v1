@@ -5,8 +5,10 @@ import { chunkText } from '@/lib/chunk';
 
 // IMPORTANT:
 // pdf-parse worker must be imported before pdf-parse itself.
-import { CanvasFactory } from 'pdf-parse/worker';
-import { PDFParse } from 'pdf-parse';
+// import { CanvasFactory } from 'pdf-parse/worker';
+// import { PDFParse } from 'pdf-parse';
+
+
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -129,8 +131,8 @@ export async function POST(request) {
 
     const title = String(
       form.get('title') ||
-        file?.name ||
-        'Untitled material'
+      file?.name ||
+      'Untitled material'
     );
 
     if (
@@ -166,9 +168,10 @@ export async function POST(request) {
 
     // IMPORTANT:
     // Convert Buffer into Uint8Array for pdf-parse v2.
+    const { PDFParse } = await import('pdf-parse');
+
     parser = new PDFParse({
       data: new Uint8Array(buffer),
-      CanvasFactory,
     });
 
     const parsed = await parser.getText();
